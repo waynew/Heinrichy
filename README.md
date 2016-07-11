@@ -22,11 +22,11 @@ values which is optional) and then just run 'heinrichy_main.py'.
 
 ## Basic questions
 ```
-'how are you?'
 'schedule'
-'is the martian any good?'
+'whats the day today?'
 'whats 100*42?'
-'rhymes to happy'
+'who was 40th president of united states of america?'
+'when did binladen died?'
 ```
 
 ## To-do
