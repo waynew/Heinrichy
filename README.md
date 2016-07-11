@@ -17,7 +17,7 @@ Heinrichy is python based assistant which can help you with;
 And many more modules coming soon!
 
 ## Installation
-After downloading Heinrichy, fill in the config file where the values say 'default' (you can also change some
+After downloading Heinrichy, fill in the config file where the values say 'default' (you can also change some other
 values which is optional) and then just run 'heinrichy_main.py'.
 
 ## Basic questions
