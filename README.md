@@ -16,8 +16,15 @@ Heinrichy is python based assistant which can help you with;
 - calculate medium-level calculation
 And many more modules coming soon!
 
+## Current version
+The most recent version is _0.23Alpha which brings:
+
+- 'Back up' answer engine, in case wolframalpha won't have any answers for you, Heinrichy will be able to ask [Evi](https://www.evi.com/)
+- Bug fix
+- Ability to change format of the date
+
 ## Installation
-After downloading Heinrichy, fill in the config file where the values say 'default' (you can also change some other
+After downloading Heinrichy, run `pip install beautifulsoup` to install Beautiful Soup module which is required. After that all that is left for you to do is to fill in the config file where the values say 'default' (you can also change some other
 values which is optional) and then just run 'heinrichy_main.py'.
 
 ## Basic questions
@@ -48,11 +55,11 @@ It was made especially for GNU/Linux as members of Linux Master Race also need a
 code modifications, the code should work on Microsoft Windows or MacOS. I've decided to create Heinrichy after
 I came across an article where the author was trying to live in the terminal and only use the terminal without any GUI for
 30 days. This is nearly impossible without any preparation which is why I created Heinrichy, I wanted to do 
-nearly everything in the command line without the need for any user interface.
+everything in one place in the command line without the need for any user interface.
 
 ## How can I help?
 If you have any ideas on what I could add to Heinrichy, how I could change it or if you found some interesting
-script that I could use as module in Heinrichy, just email me; michpcx@protonmail.ch. ALso, if you found some
+script that I could use as module in Heinrichy, just email me; michpcx@protonmail.ch. Also, if you found some
 bugs in the code or you have more efficient way of performing a task, just create new issue in 'Issues' tab.
 
 *By michpcx, michpcx@protonmail.ch*
