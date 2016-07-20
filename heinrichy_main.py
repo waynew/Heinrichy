@@ -5,7 +5,7 @@
 #              | |_| |/ _ | | '_ \| '__| |/ __| '_ \| | | |
 #              |  _  |  __| | | | | |  | | (__| | | | |_| |
 #              |_| |_|\___|_|_| |_|_|  |_|\___|_| |_|\__, |
-#                                                    |___/            __Alpha_20
+#                                                    |___/            __Alpha_23
 #
 #   Heinrichy - personal assistant made especially for GNU/Linux because we
 #                   deserve our own version of siri too!
@@ -51,12 +51,14 @@ else:
     show_version = os.environ.get('Show version', config.show_version)
     show_schedule = os.environ.get('Show schedule', config.show_schedule)
     clear_commands = os.environ.get('Clear commands', config.clear_commands)
+    additional_search = os.environ.get('Additional search', config.additional_search)
     version = os.environ.get('Version', config.version)
     letter_color = os.environ.get('Color of the letters', config.letter_color)
-    print "Config file loaded..."
 
     # Loading schedule
     schedule = os.environ.get('Schedule', config.schedule)
+    schedule_date_format = os.environ.get('Schedule date format', config.schedule_date_format)
+    print "Config file loaded..."
 
 # Checking for schedule file
 
@@ -79,17 +81,34 @@ import random
 import httplib2
 from timeit import timeit
 from time import sleep
-from tqdm import trange
 import xml.etree.ElementTree as ET
+from bs4 import BeautifulSoup
 
 print "Setting variables..."
 clear = lambda: os.system('clear')
-todays_date = str(time.strftime("%d/%m/%Y"))
 sys.dont_write_bytecode = True
 schedule_list_for_today = [];
 
 print "Changing the size of the terminal..."
 sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=32, cols=115))
+
+print "Setting up the format of the dates..."
+if schedule_date_format == "DD/MM/YYYY":
+    schedule_date_format_type = 1
+    todays_date = str(time.strftime("%d/%m/%Y"))
+elif schedule_date_format == "MM/DD/YYYY":
+    schedule_date_format_type = 2
+    todays_date = str(time.strftime("%m/%d/%Y"))
+elif schedule_date_format == "YYYY/MM/DD":
+    schedule_date_format_type = 3
+    todays_date = str(time.strftime("%Y/%m/%d"))
+elif schedule_date_format == "YYYY/DD/MM":
+    schedule_date_format_type = 4
+    todays_date = str(time.strftime("%Y/%d/%m"))
+else:
+    print "Invalid date format, please change 'schedule_date_format' in config file..."
+    print "Exiting..."
+    sys.exit()
 
 
 # Classes & functions
@@ -113,7 +132,8 @@ def list_schedule():
     total_task_number_today = 0
     for task in schedule:
         if schedule[task] == todays_date:
-            schedule_list_for_today.insert(total_task_number_today, task)
+            if not task in schedule_list_for_today:
+                schedule_list_for_today.insert(total_task_number_today, task)
             total_task_number_today = total_task_number_today + 1
     if total_task_number_today == 0:
         print "Your today's schedule;"
@@ -168,12 +188,23 @@ def print_schedule():
         print "\n"
 
 def check_birthday():
-    # Checking if the user has birthday today
-    if date_of_birth[:6] == todays_date[:6]:
-        print bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE
+    # Checking if today is users birthday
+    if schedule_date_format_type == 1:
+        if date_of_birth[:5] == str(time.strftime("%d/%m")):
+            print bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE
+    elif schedule_date_format_type == 2:
+        if date_of_birth[:5] == str(time.strftime("%m/%d")):
+            print bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE
+    elif schedule_date_format_type == 3:
+        if date_of_birth[5:10] == str(time.strftime("%m/%d")):
+            print bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE
+    elif schedule_date_format_type == 4:
+        if date_of_birth[5:10] == str(time.strftime("%d/%m")):
+            print bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE
 
 def response(query):                                                            # Function gets the xml file create from engine and gets plain text from it.
     query = query.lower()
+    query_original = query
     query = urllib.urlencode({'input':query})
     app_id = "Q6254U-URKKHH9JLL"
     wolfram_api = "http://api.wolframalpha.com/v2/query?appid="+app_id+"&format=plaintext&podtitle=Result&"+query
@@ -192,10 +223,45 @@ def response(query):                                                            
         me_no_english1 = "Sorry, I didn't understood that."
         me_no_english2 = "I didn't get that."
         me_no_english3 = "Ohh, english language is tough, I can't understand what you said."
-        me_no_english = [me_no_english1, me_no_english2, me_no_english3]
-        return random.choice(me_no_english)
+        me_no_english4 = "It seems like I can't answer this question."
+        me_no_english = [me_no_english1, me_no_english2, me_no_english3, me_no_english4]
 
+        if additional_search == True:
+            query_original = query_original.replace(" ", "_")
+            r = urllib.urlopen("https://www.evi.com/q/" + query_original).read()
+            whole_content = BeautifulSoup(r, "lxml")
+            answer = str(whole_content.find(class_="tk_common"))
+            length = int(len(str(answer)))
+            first_length = length - 9
+            answer = answer[25:first_length]
+            if answer.find('None'):
+                return random.choice(me_no_english)
+            else:
+                return answer
 
+        elif additional_search == False:
+            return random.choice(me_no_english)
+
+        elif additional_search == "Ask":
+            print "It seems like I can't answer this question."
+            print "Do you want me to send query to Evi? [Y/N]"
+            user_input = raw_input("[Y/N] >")
+            if user_input == "Y" or user_input == "y":
+                query_original = query_original.replace(" ", "_")
+                r = urllib.urlopen("https://www.evi.com/q/" + query_original).read()
+                whole_content = BeautifulSoup(r, "lxml")
+                answer = str(whole_content.find(class_="tk_common"))
+                length = int(len(str(answer)))
+                first_length = length - 9
+                answer = answer[25:first_length]
+                if answer.find('None'):
+                    return random.choice(me_no_english)
+                else:
+                    return answer
+            elif user_input == "N" or user_input == "n":
+                return "\n Press enter to reset."
+            else:
+                return "Wrong command."
 
 
 # -----------------------------------  Main  -----------------------------------
