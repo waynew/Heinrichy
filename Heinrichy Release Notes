@@ -1,0 +1,45 @@
+--------------------------------------------------------------------------------
+--              _   _      _            _      _                             --
+--             | | | | ___(_)_ __  _ __(_) ___| |__  _   _                   --
+--             | |_| |/ _ | | '_ \| '__| |/ __| '_ \| | | |                  --
+--             |  _  |  __| | | | | |  | | (__| | | | |_| |                  --
+--             |_| |_|\___|_|_| |_|_|  |_|\___|_| |_|\__, |                  --
+--                                                   |___/                   --
+--------------------------------------------------------------------------------
+
+ (+) - Adds new fectures 
+ (-) - Removes something
+ (Change)- Changes something
+ (Fix)- Fixes a bug/error
+
+--------------------------------- 0.23_Alpha -----------------------------------  (20 July 2016)
+- (+) Added ability to search Evi (www.evi.com) if wolframalpha servers return error/no response
+- (+) The user has now the ability to change if the searches will be directed automatically to Evi if wolframalpha returns error, to ask every time or to never contact Evi.
+- (Fix) Fixed bug with schedule list being repeated after opening and exiting schedule module
+- (Added) From now on, Heinrichy is shared under GLP v3 license.
+- (Added) Users now can change the format of the dates in the config
+
+--------------------------------- 0.20_Alpha -----------------------------------  (10 July 2016)
+- (Change) The whole script was rewritten so the code is more elegant and its not a mess.
+- (Change) Config file was changed from json format to py.
+- (+) Created environment.py to check the os and python version on startup.
+- (Change) Schedule now will be managed as separate module in /modules.
+- (+) Added ability to change the colour of the "Heinrichy" text
+- (+) Added ability to remove schedule from showing up after the "Heinrichy" text
+- (+) Added ability to clear the screen after output from Heinrichy
+- (Change) Moved main 'Heinrichy' text and schedule view to the functions
+
+--------------------------------- 0.11_Alpha -----------------------------------  (18 January 2016)
+
+- (-) Deleted few lines of code in data.py that weren't needed.
+- (+) Added few sentence modifications that allow to add schedule.
+- (Change) Moved birthday checking to function.
+- (Change) Ask Heinrichy how old he is.
+- (Fix) Fixed bug with signs "--" that were doubled if there wasn't any events for today.
+
+
+--------------------------------- 0.10_Alpha -----------------------------------  (18 January 2016)
+
+- (+) Added function to add tasks to the schedule.
+- (Change) Variable local_command set as global at the start of the function instead at the end.
+
