@@ -5,7 +5,7 @@
 #              | |_| |/ _ | | '_ \| '__| |/ __| '_ \| | | |
 #              |  _  |  __| | | | | |  | | (__| | | | |_| |
 #              |_| |_|\___|_|_| |_|_|  |_|\___|_| |_|\__, |
-#                                                    |___/            __Alpha_20
+#                                                    |___/            __Alpha_23
 #
 #   Heinrichy - personal assistant made especially for GNU/Linux because we
 #                   deserve our own version of siri too!
@@ -34,9 +34,23 @@ import config
 
 # Importing schedule
 schedule = os.environ.get('Schedule', config.schedule)
+schedule_date_format = os.environ.get('Schedule date format', config.schedule_date_format)
 
-#Setting variable
+#Setting variables
 exit_code = 0
+
+if schedule_date_format == "DD/MM/YYYY":
+    schedule_date_format_type = 1
+elif schedule_date_format == "MM/DD/YYYY":
+    schedule_date_format_type = 2
+elif schedule_date_format == "YYYY/MM/DD":
+    schedule_date_format_type = 3
+elif schedule_date_format == "YYYY/DD/MM":
+    schedule_date_format_type = 4
+else:
+    print "Invalid date format, please change 'schedule_date_format' in config file..."
+    print "Exiting..."
+    sys.exit()
 
 
 # -----------------------------------  Main  -----------------------------------
@@ -69,23 +83,32 @@ while exit_code == 0:
         print "remove [name of the task] - removes the task from the schedule,"
         print "rename [name of the task] - changes the name of already existing task,"
         print "move [name of the task] - moves one task to another date"
-        print "save/update - saves your schedule to the file"
+        print "exit - exits schedule module"
 
     # Add - add the task to schedue
     elif user_input[:4] == "add ":
         task = user_input.split(' ', 1)[1]
-        print " Adding '" + task + "' to the schedule list, please type in a date for this task in format dd/mm/yyyy;"
+        print " Adding '" + task + "' to the schedule list, please type in a date for this task in the format " + schedule_date_format
         year = int(time.strftime("%Y"))
         month = int(time.strftime("%m"))
         cal = calendar.month(year, month)
-        print "\n" + cal + "Todays date is: " + str(time.strftime("%d/%m/%Y"))
+
+        if schedule_date_format_type == 1:
+            date = str(time.strftime("%d/%m/%Y"))
+        elif schedule_date_format_type == 2:
+            date = str(time.strftime("%m/%d/%Y"))
+        elif schedule_date_format_type == 3:
+            date = str(time.strftime("%Y/%m/%d"))
+        elif schedule_date_format_type == 4:
+            date = str(time.strftime("%Y/%m/%d"))
+
+        print "\n" + cal + "Todays date is: " + date
         date_of_task = raw_input("schedule, date>")
         if date_of_task == "":
             print "You haven't chosen any date, selecting todays date..."
-            date_of_task = str(time.strftime("%d/%m/%Y"))
-            schedule[task.lower()] = date_of_task
+            schedule[task.lower()] = date
             print "Your task has been added."
-        elif date_of_task[:2].isdigit() == False:  # Fix it
+        elif date_of_task[:2].isdigit() == False:
             print "This is not a date!"
         else:
             schedule[task.lower()] = date_of_task
@@ -135,20 +158,16 @@ while exit_code == 0:
         elif task not in schedule.keys():
             print "That task is not on the list!"
 
-    # Save - saves the schedule to config file
-    elif user_input == "save" or user_input == "update":
-        with open(config_file + "/config.py", "r+") as config_file_open:
-            config_full = config_file_open.readlines()
-            config_full[13] = "schedule = " + str(schedule)
-        with open(config_file + "/config.py", "w") as config_file_open:
-            config_file_open.writelines(config_full)
-        print "Your schedule has been updated, you can go back to heinrichy using 'exit' command."
-
     # Exit - exits the module to go back to Heinrichy
     elif user_input == "exit":
         print "You are about to exit 'schedule module'. Are you sure you want to continue? [Y/N]"
         user_input = raw_input("schedule, [Y/N]>")
         if user_input == "Y" or user_input == "y":
+            with open(config_file + "/config.py", "r+") as config_file_open:
+                config_full = config_file_open.readlines()
+                config_full[15] = "schedule = " + str(schedule)
+            with open(config_file + "/config.py", "w") as config_file_open:
+                config_file_open.writelines(config_full)
             exit_code = 1
         elif user_input == "N" or user_input == "n":
             print "Alright then, you can carry on to modify your schedule."
