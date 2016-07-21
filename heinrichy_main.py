@@ -10,6 +10,7 @@
 #   Heinrichy - personal assistant made especially for GNU/Linux because we
 #                   deserve our own version of siri too!
 #								      By michpcx
+from __future__ import print_function
 
 # Importing first few modules required to analyse environment
 import os
@@ -19,8 +20,8 @@ environment_file = current_path + "/environment.py"
 is_environment_file = os.path.isfile(environment_file)
 
 if not is_environment_file:
-    print "environment.py not found, please redownload Heinrichy with this file..."
-    print "Exiting..."
+    print("environment.py not found, please redownload Heinrichy with this file...")
+    print("Exiting...")
     sys.exit()
 else:
     import environment
@@ -32,13 +33,13 @@ config_file = current_path + "/config.py"
 is_config_file = os.path.isfile(config_file)
 
 if not is_config_file:
-    print "Heinrichy - personal assistant made especially for GNU/Linux because we deserve our own version of siri too!"
-    print "Checking environment..."
+    print("Heinrichy - personal assistant made especially for GNU/Linux because we deserve our own version of siri too!")
+    print("Checking environment...")
     checking_environment.check_os()
     checking_environment.check_python_version()
-    print "Seems like your environment is able to run Heinrichy, or you had to use force..."
-    print "To make sure Heinrichy will work properly, you need to run install_script.sh to install dependencies."
-    print "Exiting..."
+    print("Seems like your environment is able to run Heinrichy, or you had to use force...")
+    print("To make sure Heinrichy will work properly, you need to run install_script.sh to install dependencies.")
+    print("Exiting...")
     sys.exit()
 else:
     import config
@@ -58,25 +59,24 @@ else:
     # Loading schedule
     schedule = os.environ.get('Schedule', config.schedule)
     schedule_date_format = os.environ.get('Schedule date format', config.schedule_date_format)
-    print "Config file loaded..."
+    print("Config file loaded...")
 
 # Checking for schedule file
 
 schedule_file = current_path + "/modules/schedule.py"
 is_schedule_file = os.path.isfile(schedule_file)
 
-print "Loading schedule module..."
+print("Loading schedule module...")
 if not is_schedule_file:
-    print "Heinrichy wasn't able to detect schedule.py file in /modules which is required to run, please redownload Heinrichy with this file..."
-    print "Exiting..."
+    print("Heinrichy wasn't able to detect schedule.py file in /modules which is required to run, please redownload Heinrichy with this file...")
+    print("Exiting...")
     sys.exit()
 
 
 # Loading additional modules, setting important variables and changing the size of terminal
-print "Loading main modules..."
+print("Loading main modules...")
 import json
 import time
-import urllib
 import random
 import httplib2
 from timeit import timeit
@@ -84,15 +84,25 @@ from time import sleep
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 
-print "Setting variables..."
+try:
+    # on Python2, this should work
+    input = raw_input
+    range = xrange
+    from urllib import urlopen, urlencode
+except NameError:
+    # on Python3 these should work
+    from urllib.request import urlopen
+    from urllib.parse import urlencode
+
+print("Setting variables...")
 clear = lambda: os.system('clear')
 sys.dont_write_bytecode = True
 schedule_list_for_today = [];
 
-print "Changing the size of the terminal..."
+print("Changing the size of the terminal...")
 sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=32, cols=115))
 
-print "Setting up the format of the dates..."
+print("Setting up the format of the dates...")
 if schedule_date_format == "DD/MM/YYYY":
     schedule_date_format_type = 1
     todays_date = str(time.strftime("%d/%m/%Y"))
@@ -106,14 +116,14 @@ elif schedule_date_format == "YYYY/DD/MM":
     schedule_date_format_type = 4
     todays_date = str(time.strftime("%Y/%d/%m"))
 else:
-    print "Invalid date format, please change 'schedule_date_format' in config file..."
-    print "Exiting..."
+    print("Invalid date format, please change 'schedule_date_format' in config file...")
+    print("Exiting...")
     sys.exit()
 
 
 # Classes & functions
 
-print "Loading classes and functions..."
+print("Loading classes and functions...")
 
 class bcolors:
     PINK = '\033[95m'
@@ -136,13 +146,13 @@ def list_schedule():
                 schedule_list_for_today.insert(total_task_number_today, task)
             total_task_number_today = total_task_number_today + 1
     if total_task_number_today == 0:
-        print "Your today's schedule;"
-        print "- Your schedule is empty for today!"
+        print("Your today's schedule;")
+        print("- Your schedule is empty for today!")
     elif not total_task_number_today == 0:
-        print "Your today's schedule;"
+        print("Your today's schedule;")
         for task in schedule_list_for_today:
-            print "- " + task
-    print "\n"
+            print("- " + task)
+    print("\n")
 
 # Function lists the schedule. First sets the variable total_task_number_today
 # to 0 then for each item that is in the schedule from config file, checks
@@ -157,55 +167,55 @@ def list_schedule():
 def print_main_screen():
 
     # Main 'Heinrichy' text
-    print "___________________________________________________________________________________________________________________"
-    print "|                                                                                                                 |"
-    print "|                                                                                                                 |"
-    print "|        " + color_changer + "ooooo   ooooo            o8o                        o8o            oooo" + bcolors.WHITE + "                                  |"
-    print "|        " + color_changer + "`888'   `888'             ''                        `'            `888" + bcolors.WHITE + "                                   |"
-    print "|         " + color_changer + "888     888   .ooooo.  oooo  ooo. .oo.   oooo d8b oooo   .ooooo.   888 .oo.   oooo    ooo" + bcolors.WHITE + "               |"
-    print "|         " + color_changer + "888ooooo888  d88' `88b `888  `888P'Y88b  `888""8P  `888   d88' `'Y8  888P'Y88b   `88.   .8'" + bcolors.WHITE + "               |"
-    print "|         " + color_changer + "888     888  888ooo888  888   888   888   888      888  888        888   888    `88..8'" + bcolors.WHITE + "                 |"
-    print "|         " + color_changer + "888     888  888    .o  888   888   888   888      888  888   .o8  888   888     `888'" + bcolors.WHITE + "                  |"
-    print "|        " + color_changer + "o888o   o888o `Y8bod8P' o888o o888o o888o d888b    o888o `Y8bod8P' o888o o888o     .8'" + bcolors.WHITE + "                   |"
-    print "|                                                                                       " + color_changer + ".o..P'" + bcolors.WHITE + "                    |"
+    print("___________________________________________________________________________________________________________________")
+    print("|                                                                                                                 |")
+    print("|                                                                                                                 |")
+    print("|        " + color_changer + "ooooo   ooooo            o8o                        o8o            oooo" + bcolors.WHITE + "                                  |")
+    print("|        " + color_changer + "`888'   `888'             ''                        `'            `888" + bcolors.WHITE + "                                   |")
+    print("|         " + color_changer + "888     888   .ooooo.  oooo  ooo. .oo.   oooo d8b oooo   .ooooo.   888 .oo.   oooo    ooo" + bcolors.WHITE + "               |")
+    print("|         " + color_changer + "888ooooo888  d88' `88b `888  `888P'Y88b  `888""8P  `888   d88' `'Y8  888P'Y88b   `88.   .8'" + bcolors.WHITE + "               |")
+    print("|         " + color_changer + "888     888  888ooo888  888   888   888   888      888  888        888   888    `88..8'" + bcolors.WHITE + "                 |")
+    print("|         " + color_changer + "888     888  888    .o  888   888   888   888      888  888   .o8  888   888     `888'" + bcolors.WHITE + "                  |")
+    print("|        " + color_changer + "o888o   o888o `Y8bod8P' o888o o888o o888o d888b    o888o `Y8bod8P' o888o o888o     .8'" + bcolors.WHITE + "                   |")
+    print("|                                                                                       " + color_changer + ".o..P'" + bcolors.WHITE + "                    |")
     if show_version == True:
-        print "|                                                                                       " + color_changer + "`Y8P'" + bcolors.WHITE + "        " + version + "  |"
+        print("|                                                                                       " + color_changer + "`Y8P'" + bcolors.WHITE + "        " + version + "  |")
     elif show_version == False:
-        print "|                                                                                       " + color_changer + "`Y8P'" + bcolors.WHITE + "                     |"
-    print "|_________________________________________________________________________________________________________________|"
+        print("|                                                                                       " + color_changer + "`Y8P'" + bcolors.WHITE + "                     |")
+    print("|_________________________________________________________________________________________________________________|")
 
 def print_schedule():
     # Printing schedule
-    print "\n"
+    print("\n")
     if show_schedule == True:
         if not schedule:
-            print "Your today's schedule;"
-            print "- Your schedule is empty for today!"
-            print "\n"
+            print("Your today's schedule;")
+            print("- Your schedule is empty for today!")
+            print("\n")
         else:
             list_schedule()
     elif show_schedule == False:
-        print "\n"
+        print("\n")
 
 def check_birthday():
     # Checking if today is users birthday
     if schedule_date_format_type == 1:
         if date_of_birth[:5] == str(time.strftime("%d/%m")):
-            print bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE
+            print(bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE)
     elif schedule_date_format_type == 2:
         if date_of_birth[:5] == str(time.strftime("%m/%d")):
-            print bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE
+            print(bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE)
     elif schedule_date_format_type == 3:
         if date_of_birth[5:10] == str(time.strftime("%m/%d")):
-            print bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE
+            print(bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE)
     elif schedule_date_format_type == 4:
         if date_of_birth[5:10] == str(time.strftime("%d/%m")):
-            print bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE
+            print(bcolors.YELLOW + "Happy Birthday, " + name + "!\n" + bcolors.WHITE)
 
 def response(query):                                                            # Function gets the xml file create from engine and gets plain text from it.
     query = query.lower()
     query_original = query
-    query = urllib.urlencode({'input':query})
+    query = urlencode({'input':query})
     app_id = "Q6254U-URKKHH9JLL"
     wolfram_api = "http://api.wolframalpha.com/v2/query?appid="+app_id+"&format=plaintext&podtitle=Result&"+query
     resp, content = httplib2.Http().request(wolfram_api)
@@ -228,7 +238,7 @@ def response(query):                                                            
 
         if additional_search == True:
             query_original = query_original.replace(" ", "_")
-            r = urllib.urlopen("https://www.evi.com/q/" + query_original).read()
+            r = urlopen("https://www.evi.com/q/" + query_original).read()
             whole_content = BeautifulSoup(r, "lxml")
             answer = str(whole_content.find(class_="tk_common"))
             length = int(len(str(answer)))
@@ -243,12 +253,12 @@ def response(query):                                                            
             return random.choice(me_no_english)
 
         elif additional_search == "Ask":
-            print "It seems like I can't answer this question."
-            print "Do you want me to send query to Evi? [Y/N]"
-            user_input = raw_input("[Y/N] >")
+            print("It seems like I can't answer this question.")
+            print("Do you want me to send query to Evi? [Y/N]")
+            user_input = input("[Y/N] >")
             if user_input == "Y" or user_input == "y":
                 query_original = query_original.replace(" ", "_")
-                r = urllib.urlopen("https://www.evi.com/q/" + query_original).read()
+                r = urlopen("https://www.evi.com/q/" + query_original).read()
                 whole_content = BeautifulSoup(r, "lxml")
                 answer = str(whole_content.find(class_="tk_common"))
                 length = int(len(str(answer)))
@@ -300,13 +310,13 @@ if clear_commands == True:
         check_birthday()
 
         # Asking for user input
-        print "How can I help you today, " + name + "?"
-        user_input = raw_input(">")
+        print("How can I help you today, " + name + "?")
+        user_input = input(">")
         if user_input == "schedule":
-            execfile(schedule_file)
+            exec(compile(open(schedule_file).read(), schedule_file, 'exec'))
         else:
-            print response(user_input)
-            pause = raw_input()
+            print(response(user_input))
+            pause = input()
 
 elif clear_commands == False:
 
@@ -321,13 +331,13 @@ elif clear_commands == False:
 
     # Asking for user input
     while True:
-        print "How can I help you today, " + name + "?"
-        user_input = raw_input(">")
+        print("How can I help you today, " + name + "?")
+        user_input = input(">")
         if user_input == "schedule":
-            execfile(schedule_file)
+            exec(compile(open(schedule_file).read(), schedule_file, 'exec'))
         else:
-            print response(user_input)
-            pause = raw_input()
+            print(response(user_input))
+            pause = input()
 
 else:
-    print "Variable clear_commands has invalid value, please change to True or False."
+    print("Variable clear_commands has invalid value, please change to True or False.")

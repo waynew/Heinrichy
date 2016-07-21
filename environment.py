@@ -15,35 +15,44 @@
 
 # Script environment.py allows Heinrichy to analyse the environment to see if
 # you can run Heinrichy.
+from __future__ import print_function
 
 import sys
 from sys import platform as _platform
 sys.dont_write_bytecode = True
 
+try:
+    # on Python2, this should work
+    input = raw_input
+    range = xrange
+except NameError:
+    # Python3 specific imports should go here
+    pass
+
 def check_os():
     if _platform == "linux" or _platform == "linux2":
-        print "Linux detected..."
+        print("Linux detected...")
     else:
-        print "You are not using GNU/Linux which is required for Heinrichy to work properly..."
-        non_linux = raw_input("Do you want to continue anyway? [Y/N]")
+        print("You are not using GNU/Linux which is required for Heinrichy to work properly...")
+        non_linux = input("Do you want to continue anyway? [Y/N]")
         if non_linux.lower() == "y":
-            print "Very well, continuing to start Heinrichy..."
+            print("Very well, continuing to start Heinrichy...")
         elif non_linux.lower() == "n":
-            print "Exiting..."
+            print("Exiting...")
             sys.exit()
         else:
-            print "Wrong command, exiting..."
+            print("Wrong command, exiting...")
             sys.exit()
 
 def check_python_version():
     if not sys.version_info[:2] == (2, 7):
-        print "You are not using python 2.7 which is required for Heinrichy to work properly..."
-        non_twoseven = raw_input("Do you want to continue anyway? [Y/N]")
+        print("You are not using python 2.7 which is required for Heinrichy to work properly...")
+        non_twoseven = input("Do you want to continue anyway? [Y/N]")
         if non_twoseven.lower() == "y":
-            print "Okay, continuing with Heinrichy..."
+            print("Okay, continuing with Heinrichy...")
         elif non_twoseven.lower() == "n":
-            print "Exiting..."
+            print("Exiting...")
             sys.exit()
         else:
-            print "Wrong command, exiting..."
+            print("Wrong command, exiting...")
             sys.exit()
