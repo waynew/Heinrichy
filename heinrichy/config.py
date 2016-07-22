@@ -13,4 +13,4 @@ letter_color = "BLUE"                                                           
 
 # Schedule
 schedule_date_format = "DD/MM/YYYY"                                             # Format of the dates displayed (WARNING - Before changing this, please change every date in your schedule to fit your format, otherwise it will break your schedule)
-schedule = {}
+schedule = {'fnord': '21/07/2016', 'bizz bong': '21/07/2016', 'fizzy': '21/07/2016', 'wiggly': '22/07/2016'}
